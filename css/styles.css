@@ -1,0 +1,280 @@
+/* ---------------------------------------------------------------
+   WhichDevAreYou — tokens
+--------------------------------------------------------------- */
+:root {
+    --bg-top: #1c1f24;
+    --bg-bottom: #0a0b0d;
+    --surface: #15171b;
+    --border: #2a2e34;
+    --border-hover: #3c4149;
+
+    --text: #eceef0;
+    --text-muted: #868d94;
+    --text-faint: #565b62;
+
+    --accent: #5b8fb0;
+    --accent-bright: #7fb3d1;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+    --radius: 6px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--text);
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+}
+
+main#spapp {
+    width: 100%;
+    max-width: 460px;
+}
+
+/* ---------------------------------------------------------------
+   Card
+--------------------------------------------------------------- */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+}
+
+/* ---------------------------------------------------------------
+   Progress
+--------------------------------------------------------------- */
+.progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.progress-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-faint);
+    white-space: nowrap;
+}
+
+.progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.25s ease;
+}
+
+/* ---------------------------------------------------------------
+   Intro
+--------------------------------------------------------------- */
+.intro-title {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 700;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+}
+
+.intro-copy {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0 0 32px;
+    max-width: 38ch;
+}
+
+.intro-meta {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-faint);
+    margin: 0 0 28px;
+}
+
+/* ---------------------------------------------------------------
+   Question
+--------------------------------------------------------------- */
+.question-text {
+    font-size: 22px;
+    line-height: 1.4;
+    font-weight: 600;
+    margin: 0 0 28px;
+    letter-spacing: -0.01em;
+}
+
+.answers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.answer-btn {
+    width: 100%;
+    text-align: left;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.answer-btn:hover {
+    border-color: var(--border-hover);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.answer-btn:active {
+    border-color: var(--accent);
+}
+
+.answer-btn:focus-visible {
+    outline: 2px solid var(--accent-bright);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------
+   Buttons (primary)
+--------------------------------------------------------------- */
+.btn-primary {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--bg-bottom);
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius);
+    padding: 13px 22px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.btn-primary:hover {
+    background: var(--accent-bright);
+}
+
+.btn-secondary {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-hover);
+}
+
+.btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+/* ---------------------------------------------------------------
+   Result
+--------------------------------------------------------------- */
+#result .card {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+}
+
+#result.is-revealed .card {
+    animation: reveal 0.45s ease forwards;
+}
+
+@keyframes reveal {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.result-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-faint);
+    margin: 0 0 10px;
+}
+
+.result-name {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--accent-bright);
+    margin: 0 0 16px;
+}
+
+.result-blurb {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ---------------------------------------------------------------
+   Motion & accessibility
+--------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 32px 22px;
+    }
+
+    .intro-title {
+        font-size: 26px;
+    }
+
+    .question-text {
+        font-size: 20px;
+    }
+}

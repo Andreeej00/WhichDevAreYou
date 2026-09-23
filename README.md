@@ -108,3 +108,23 @@ views/page1.html, page2.html, page3.html  → per-page content (loaded via data-
 - **Intro screen:** yes — simple landing view before Q1.
 - **Persistence:** none. State resets on manual refresh; not a concern for normal quiz flow.
 - **Share:** `.jpg` result card generated client-side via canvas, with a download button. No overcomplication — no external services, no fancy layouts.
+
+---
+
+## 8. Running It Locally
+
+`spapp` loads each view (`intro.html`, `q1.html`...) via AJAX, which browsers block over `file://`. Serve the folder instead of opening `index.html` directly, e.g.:
+
+```
+cd whichdevareyou
+python3 -m http.server 8080
+# then open http://localhost:8080
+```
+
+---
+
+## Status
+
+**Template built.** Intro screen, 5 question screens (placeholder copy, real scoring wired up), progress bar, result screen with reveal animation, retake, and jpg download all work end to end. Each answer button already carries a `data-archetype` tag, so swapping in real question text and options is a content-only change — no logic changes needed.
+
+**Next step:** replace the placeholder question text/options in `views/q1.html`–`q5.html` with the real 5 questions, and fine-tune archetype names/blurbs in `index.html` if needed.
