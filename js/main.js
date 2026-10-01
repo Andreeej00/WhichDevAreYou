@@ -2,24 +2,49 @@
 
 var ARCHETYPES = {
     architect: {
+        icon: "📐",
         name: "The Architect",
-        blurb: "You plan before you build. Structure, scalability and a clean diagram matter more to you than being first to ship."
+        blurb: "You plan before you build. Structure, scalability and a clean diagram matter more to you than being first to ship.",
+        details: "You see a codebase as a <strong>system</strong>, not a pile of files. Before anyone opens an editor, you're already asking how the pieces fit, where it will <strong>break at scale</strong>, and what the next developer will need. Teammates trust you because your projects rarely turn into a rewrite.",
+        strength: "Long-term thinking. Your designs <strong>age well</strong> and make everyone else faster.",
+        blindspot: "<strong>Over-planning.</strong> Sometimes a rough prototype teaches you more than a third diagram.",
+        tip: "Time-box the design phase, and ship a <strong>thin vertical slice</strong> early to test your assumptions."
     },
     firefighter: {
+        icon: "🚒",
         name: "The Firefighter",
-        blurb: "You thrive in chaos. Production down at 2am is where you actually feel useful."
+        blurb: "You thrive in chaos. Production down at 2am is where you actually feel useful.",
+        details: "When everything is on fire, you get <strong>calm and fast</strong>. You read logs like a story, you know where the bodies are buried, and you can fix the unfixable under pressure. Your team sleeps better knowing you're <strong>on call</strong>.",
+        strength: "Speed and composure under pressure. You find the <strong>real problem</strong> while others are still panicking.",
+        blindspot: "Fixes can become <strong>patches on patches</strong>, and calm periods can feel strangely boring.",
+        tip: "After every fire, schedule a <strong>proper fix</strong> and a short post-mortem so the same blaze doesn't return."
     },
     tinkerer: {
+        icon: "🧪",
         name: "The Tinkerer",
-        blurb: "You learn by breaking things. Four side projects open right now, and that's exactly how you like it."
+        blurb: "You learn by breaking things. Four side projects open right now, and that's exactly how you like it.",
+        details: "Curiosity is your engine. You pick up <strong>new tools</strong> the day they launch, learn by taking things apart, and bring fresh ideas nobody else thought to try. Your <strong>breadth of knowledge</strong> often saves the team when a weird problem shows up.",
+        strength: "Fast learning and creative problem solving. You connect ideas across <strong>different technologies</strong>.",
+        blindspot: "<strong>Unfinished projects.</strong> The shiny new thing can pull you away at the 80% mark.",
+        tip: "Pick <strong>one project</strong> and take it all the way to done. Finishing is a skill, and it's worth practicing."
     },
     perfectionist: {
+        icon: "💎",
         name: "The Perfectionist",
-        blurb: "You've rewritten that function six times. It's still not quite right, and you're fine waiting for the seventh."
+        blurb: "You've rewritten that function six times. It's still not quite right, and you're fine waiting for the seventh.",
+        details: "You care about <strong>craft</strong>. Naming, tests, edge cases and clean abstractions all matter to you, and your code reviews catch what others miss. Code you touch tends to be <strong>readable, tested and reliable</strong>.",
+        strength: "Quality and attention to detail. Your work <strong>rarely needs a second pass</strong> from anyone else.",
+        blindspot: "<strong>Endless polishing.</strong> Good enough on time can beat perfect too late.",
+        tip: "Define <strong>'done'</strong> before you start, and let yourself ship once it's met."
     },
     pragmatist: {
+        icon: "⚡",
         name: "The Pragmatist",
-        blurb: "If it works and it's Friday, it ships. Elegant can wait until someone complains."
+        blurb: "If it works and it's Friday, it ships. Elegant can wait until someone complains.",
+        details: "You focus on <strong>outcomes</strong>. You know the best code is the code that solves the user's problem today, so you cut scope, reuse what exists and <strong>ship early</strong>. You turn ideas into real, working products faster than anyone.",
+        strength: "Momentum and focus. You always know <strong>what matters</strong> and what can wait.",
+        blindspot: "<strong>Technical debt</strong> quietly piles up when 'temporary' solutions become permanent.",
+        tip: "Keep a short <strong>'fix later' list</strong> and actually revisit it after each release."
     }
 };
 
@@ -105,6 +130,7 @@ app.route({
 
         $section.on("click", ".retake-btn", function () {
             resetScores();
+            $section.removeClass("is-revealed");
             window.location.hash = "#intro";
         });
 
@@ -116,8 +142,13 @@ app.route({
         var key = computeResult();
         var data = ARCHETYPES[key];
         var $section = $("#result");
+        $section.find(".result-icon").text(data.icon);
         $section.find(".result-name").text(data.name);
         $section.find(".result-blurb").text(data.blurb);
+        $section.find(".result-details").html(data.details);
+        $section.find(".result-strength").html(data.strength);
+        $section.find(".result-blindspot").html(data.blindspot);
+        $section.find(".result-tip").html(data.tip);
         $section.addClass("is-revealed");
     }
 });
@@ -148,6 +179,8 @@ function downloadResultCard(key) {
     ctx.fillStyle = "#868d94";
     ctx.font = "28px ui-monospace, SFMono-Regular, Menlo, monospace";
     ctx.fillText("WhichDevAreYou", 80, 140);
+    ctx.font = "100px sans-serif";
+    ctx.fillText(data.icon, w - 200, 160);
 
     ctx.strokeStyle = "#5b8fb0";
     ctx.lineWidth = 3;

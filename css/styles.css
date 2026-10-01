@@ -34,7 +34,11 @@ body {
     margin: 0;
     font-family: var(--font-sans);
     color: var(--text);
-    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+    background-color: var(--bg-bottom);
+    background-image: url("../images/WDAY_background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
     min-height: 100vh;
     display: flex;
@@ -45,7 +49,7 @@ body {
 
 main#spapp {
     width: 100%;
-    max-width: 460px;
+    max-width: 515px;
 }
 
 /* ---------------------------------------------------------------
@@ -93,6 +97,16 @@ main#spapp {
 /* ---------------------------------------------------------------
    Intro
 --------------------------------------------------------------- */
+
+#intro .card {
+    padding: 64px 48px;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
 .intro-title {
     font-size: 30px;
     line-height: 1.25;
@@ -115,6 +129,10 @@ main#spapp {
     color: var(--text-faint);
     margin: 0 0 28px;
 }
+#intro .intro-copy {
+    max-width: 46ch;
+}
+
 
 /* ---------------------------------------------------------------
    Question
@@ -253,6 +271,85 @@ main#spapp {
 }
 
 /* ---------------------------------------------------------------
+   Icons & highlights
+--------------------------------------------------------------- */
+.intro-icons {
+    font-size: 28px;
+    letter-spacing: 6px;
+    margin: 0 0 20px;
+}
+
+.question-icon {
+    font-size: 36px;
+    line-height: 1;
+    margin: 0 0 14px;
+}
+
+.answer-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.answer-icon {
+    flex-shrink: 0;
+    width: 28px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.intro-copy strong,
+.answer-text strong,
+.result-details strong,
+.trait-text strong {
+    color: var(--accent-bright);
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------------
+   Result (extended)
+--------------------------------------------------------------- */
+.result-icon {
+    font-size: 56px;
+    line-height: 1;
+    margin: 0 0 14px;
+}
+
+.result-details {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin: 16px 0 0;
+}
+
+.result-traits {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.trait {
+    border-left: 2px solid var(--accent);
+    padding: 2px 0 2px 14px;
+}
+
+.trait-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+}
+
+.trait-text {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin: 4px 0 0;
+}
+
+/* ---------------------------------------------------------------
    Motion & accessibility
 --------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
@@ -276,5 +373,9 @@ main#spapp {
 
     .question-text {
         font-size: 20px;
+    }
+    #intro .card {
+        padding: 40px 22px;
+        min-height: 0;
     }
 }
