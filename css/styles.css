@@ -2,7 +2,6 @@
    WhichDevAreYou — tokens
 --------------------------------------------------------------- */
 :root {
-    --bg-top: #1c1f24;
     --bg-bottom: #0a0b0d;
     --surface: #15171b;
     --border: #2a2e34;
@@ -23,11 +22,6 @@
 
 * {
     box-sizing: border-box;
-}
-
-html,
-body {
-    height: 100%;
 }
 
 body {
@@ -120,7 +114,7 @@ main#spapp {
     line-height: 1.6;
     color: var(--text-muted);
     margin: 0 0 32px;
-    max-width: 38ch;
+    max-width: 46ch;
 }
 
 .intro-meta {
@@ -128,9 +122,6 @@ main#spapp {
     font-size: 13px;
     color: var(--text-faint);
     margin: 0 0 28px;
-}
-#intro .intro-copy {
-    max-width: 46ch;
 }
 
 
@@ -152,9 +143,17 @@ main#spapp {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    counter-reset: answer;
+}
+.answers li {
+    counter-increment: answer;
 }
 
+
 .answer-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
     width: 100%;
     text-align: left;
     font-family: var(--font-sans);
@@ -169,10 +168,33 @@ main#spapp {
     transition: border-color 0.15s ease, background 0.15s ease;
 }
 
+.answer-btn::before {
+    content: counter(answer, upper-alpha);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+
 .answer-btn:hover {
     border-color: var(--border-hover);
     background: rgba(255, 255, 255, 0.02);
 }
+
+.answer-btn:hover::before {
+    color: var(--accent-bright);
+    border-color: var(--accent);
+}
+
 
 .answer-btn:active {
     border-color: var(--accent);
@@ -273,29 +295,11 @@ main#spapp {
 /* ---------------------------------------------------------------
    Icons & highlights
 --------------------------------------------------------------- */
-.intro-icons {
-    font-size: 28px;
-    letter-spacing: 6px;
-    margin: 0 0 20px;
-}
 
 .question-icon {
     font-size: 36px;
     line-height: 1;
     margin: 0 0 14px;
-}
-
-.answer-btn {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.answer-icon {
-    flex-shrink: 0;
-    width: 28px;
-    font-size: 22px;
-    text-align: center;
 }
 
 .intro-copy strong,
@@ -309,11 +313,6 @@ main#spapp {
 /* ---------------------------------------------------------------
    Result (extended)
 --------------------------------------------------------------- */
-.result-icon {
-    font-size: 56px;
-    line-height: 1;
-    margin: 0 0 14px;
-}
 
 .result-details {
     font-size: 15px;
@@ -347,6 +346,19 @@ main#spapp {
     line-height: 1.55;
     color: var(--text-muted);
     margin: 4px 0 0;
+}
+
+.result-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin: 0 0 20px;
+}
+h1:focus,
+h2:focus {
+    outline: none;
 }
 
 /* ---------------------------------------------------------------

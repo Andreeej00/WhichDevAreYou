@@ -1,8 +1,10 @@
-// ---- Quiz data / state ----
+// 1) quiz data  2) scoring  3) progress bar  4) spapp routes  5) share card
 
+// Key order matters: it is also the tie-break order (first key wins a tie).
 var ARCHETYPES = {
     architect: {
         icon: "📐",
+        image: "images/architect.jpg",
         name: "The Architect",
         blurb: "You plan before you build. Structure, scalability and a clean diagram matter more to you than being first to ship.",
         details: "You see a codebase as a <strong>system</strong>, not a pile of files. Before anyone opens an editor, you're already asking how the pieces fit, where it will <strong>break at scale</strong>, and what the next developer will need. Teammates trust you because your projects rarely turn into a rewrite.",
@@ -12,6 +14,7 @@ var ARCHETYPES = {
     },
     firefighter: {
         icon: "🚒",
+        image: "images/firefighter.jpg",
         name: "The Firefighter",
         blurb: "You thrive in chaos. Production down at 2am is where you actually feel useful.",
         details: "When everything is on fire, you get <strong>calm and fast</strong>. You read logs like a story, you know where the bodies are buried, and you can fix the unfixable under pressure. Your team sleeps better knowing you're <strong>on call</strong>.",
@@ -21,6 +24,7 @@ var ARCHETYPES = {
     },
     tinkerer: {
         icon: "🧪",
+        image: "images/tinkerer.jpg",
         name: "The Tinkerer",
         blurb: "You learn by breaking things. Four side projects open right now, and that's exactly how you like it.",
         details: "Curiosity is your engine. You pick up <strong>new tools</strong> the day they launch, learn by taking things apart, and bring fresh ideas nobody else thought to try. Your <strong>breadth of knowledge</strong> often saves the team when a weird problem shows up.",
@@ -30,6 +34,7 @@ var ARCHETYPES = {
     },
     perfectionist: {
         icon: "💎",
+        image: "images/perfectionist.jpg",
         name: "The Perfectionist",
         blurb: "You've rewritten that function six times. It's still not quite right, and you're fine waiting for the seventh.",
         details: "You care about <strong>craft</strong>. Naming, tests, edge cases and clean abstractions all matter to you, and your code reviews catch what others miss. Code you touch tends to be <strong>readable, tested and reliable</strong>.",
@@ -39,6 +44,7 @@ var ARCHETYPES = {
     },
     pragmatist: {
         icon: "⚡",
+        image: "images/pragmatist.jpg",
         name: "The Pragmatist",
         blurb: "If it works and it's Friday, it ships. Elegant can wait until someone complains.",
         details: "You focus on <strong>outcomes</strong>. You know the best code is the code that solves the user's problem today, so you cut scope, reuse what exists and <strong>ship early</strong>. You turn ideas into real, working products faster than anyone.",
@@ -48,53 +54,72 @@ var ARCHETYPES = {
     }
 };
 
+// Scoring
+// Must match the section ids in index.html.
 var QUESTION_ORDER = ["q1", "q2", "q3", "q4", "q5"];
 
-var scores = {};
+// One chosen archetype per question, e.g. { q1: "architect", q2: "tinkerer" }.
+// Stored per question (not as a running total), so answering again after
+// pressing Back overwrites the old answer instead of adding a second point.
+var answers = {};
 
-function resetScores() {
-    scores = { architect: 0, firefighter: 0, tinkerer: 0, perfectionist: 0, pragmatist: 0 };
-}
-resetScores();
-
-function recordAnswer(archetype) {
-    if (scores.hasOwnProperty(archetype)) {
-        scores[archetype]++;
-    }
-}
-
+// Count the answers per archetype; the highest count wins. Because of the
+// strict ">", a tie goes to whichever archetype comes first in ARCHETYPES
+// (deterministic, no randomness).
 function computeResult() {
-    var winner = "architect"; 
-    var best = -1;
-    var order = ["architect", "firefighter", "tinkerer", "perfectionist", "pragmatist"];
-    for (var i = 0; i < order.length; i++) {
-        var key = order[i];
-        if (scores[key] > best) {
-            best = scores[key];
+    var keys = Object.keys(ARCHETYPES);
+    var scores = {};
+    keys.forEach(function (key) { scores[key] = 0; });
+    Object.keys(answers).forEach(function (qid) { scores[answers[qid]]++; });
+
+    var winner = keys[0];
+    keys.forEach(function (key) {
+        if (scores[key] > scores[winner]) {
             winner = key;
         }
-    }
+    });
     return winner;
 }
 
-// ---- Progress bar ----
+// Progress bar
 
-function renderProgress($section, questionId) {
-    var idx = QUESTION_ORDER.indexOf(questionId) + 1;
-    var total = QUESTION_ORDER.length;
-    var pct = Math.round((idx / total) * 100);
-    var $bar = $section.find(".progress");
-    $bar.find(".progress-label").text("Q" + (idx < 10 ? "0" + idx : idx) + " / " + (total < 10 ? "0" + total : total));
-    $bar.find(".progress-fill").css("width", pct + "%");
+function pad(n) {
+    return n < 10 ? "0" + n : n;
 }
 
-// ---- App wiring ----
+// Fills in "Q02 / 05" and the bar width; aria-* lets screen readers read the bar.
+function renderProgress($section, questionId) {
+    var current = QUESTION_ORDER.indexOf(questionId) + 1;
+    var total = QUESTION_ORDER.length;
+    $section.find(".progress-label").text("Q" + pad(current) + " / " + pad(total));
+    $section.find(".progress-fill").css("width", (current / total * 100) + "%");
+    $section.find(".progress-track").attr({
+        role: "progressbar",
+        "aria-label": "Quiz progress",
+        "aria-valuemin": 0,
+        "aria-valuemax": total,
+        "aria-valuenow": current
+    });
+}
+
+// After each navigation, move focus to the view's heading so keyboard and
+// screen-reader users land at the top of the new screen. tabindex="-1" makes
+// the heading focusable by script without adding it to the Tab order.
+function focusHeading(viewId) {
+    $("#" + viewId).find("h1, h2").first().attr("tabindex", "-1").trigger("focus");
+}
+
+// ---- 4. spapp wiring ----
+// spapp = hash router: each <section> in index.html is a "view".
+// onCreate runs once, when the view's HTML is first loaded from ./views/.
+// onReady runs every time the view is shown.
 
 var app = $.spapp({
     defaultView: "#intro",
     templateDir: "./views/"
 });
 
+// One route per question; all five behave the same.
 QUESTION_ORDER.forEach(function (qid, i) {
     app.route({
         view: qid,
@@ -102,13 +127,18 @@ QUESTION_ORDER.forEach(function (qid, i) {
             var $section = $("#" + qid);
             renderProgress($section, qid);
 
+            // Any answer button: save the answer for this question, then move
+            // to the next question (or to the result after the last one)
+            // by changing the hash.
             $section.on("click", ".answer-btn", function () {
-                var archetype = $(this).data("archetype");
-                recordAnswer(archetype);
+                answers[qid] = $(this).data("archetype");
 
                 var next = (i + 1 < QUESTION_ORDER.length) ? QUESTION_ORDER[i + 1] : "result";
                 window.location.hash = "#" + next;
             });
+        },
+        onReady: function () {
+            focusHeading(qid);
         }
     });
 });
@@ -116,10 +146,12 @@ QUESTION_ORDER.forEach(function (qid, i) {
 app.route({
     view: "intro",
     onCreate: function () {
-        resetScores();
         $("#intro").on("click", ".start-btn", function () {
             window.location.hash = "#" + QUESTION_ORDER[0];
         });
+    },
+    onReady: function () {
+        focusHeading("intro");
     }
 });
 
@@ -129,8 +161,8 @@ app.route({
         var $section = $("#result");
 
         $section.on("click", ".retake-btn", function () {
-            resetScores();
-            $section.removeClass("is-revealed");
+            answers = {};
+            $section.removeClass("is-revealed"); // so the reveal animation replays
             window.location.hash = "#intro";
         });
 
@@ -138,34 +170,47 @@ app.route({
             downloadResultCard(computeResult());
         });
     },
+    // onReady (not onCreate) because the result must be recomputed on every visit.
     onReady: function () {
-        var key = computeResult();
-        var data = ARCHETYPES[key];
+        var data = ARCHETYPES[computeResult()];
         var $section = $("#result");
-        $section.find(".result-icon").text(data.icon);
+        $section.find(".result-image").attr({ src: data.image, alt: data.name });
         $section.find(".result-name").text(data.name);
         $section.find(".result-blurb").text(data.blurb);
+        // .html() because these strings contain <strong> highlights
         $section.find(".result-details").html(data.details);
         $section.find(".result-strength").html(data.strength);
         $section.find(".result-blindspot").html(data.blindspot);
         $section.find(".result-tip").html(data.tip);
-        $section.addClass("is-revealed");
+        $section.addClass("is-revealed"); // triggers the CSS fade-in
+        focusHeading("result");
     }
 });
 
 app.run();
 
-// ---- Share-as-jpg ----
+// Share-as-jpg
+// Draws the result on an off-screen <canvas> and downloads it as a jpg.
+// The picture has to finish loading before it can be drawn, hence onload.
 
 function downloadResultCard(key) {
     var data = ARCHETYPES[key];
-    var w = 1000, h = 1250;
+    var img = new Image();
+    img.onload = function () {
+        drawCard(data, img);
+    };
+    img.src = data.image;
+}
+
+function drawCard(data, img) {
+    var w = 1000, h = 1050;
 
     var canvas = document.createElement("canvas");
     canvas.width = w;
     canvas.height = h;
     var ctx = canvas.getContext("2d");
 
+    // background gradient + frame
     var grad = ctx.createLinearGradient(0, 0, 0, h);
     grad.addColorStop(0, "#1c1f24");
     grad.addColorStop(1, "#0a0b0d");
@@ -176,6 +221,7 @@ function downloadResultCard(key) {
     ctx.lineWidth = 2;
     ctx.strokeRect(40, 40, w - 80, h - 80);
 
+    // header: app name, emoji, accent underline
     ctx.fillStyle = "#868d94";
     ctx.font = "28px ui-monospace, SFMono-Regular, Menlo, monospace";
     ctx.fillText("WhichDevAreYou", 80, 140);
@@ -189,27 +235,33 @@ function downloadResultCard(key) {
     ctx.lineTo(200, 170);
     ctx.stroke();
 
+    // picture: images are 2:1, so this box fits without cropping or stretching
+    ctx.drawImage(img, 80, 220, w - 160, 420);
+
+    // name + blurb (wrapText breaks long lines)
     ctx.fillStyle = "#eceef0";
     ctx.font = "bold 64px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    wrapText(ctx, data.name, 80, 340, w - 160, 72);
+    wrapText(ctx, data.name, 80, 740, w - 160, 72);
 
     ctx.fillStyle = "#b7bdc3";
     ctx.font = "32px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    wrapText(ctx, data.blurb, 80, 480, w - 160, 44);
+    wrapText(ctx, data.blurb, 80, 820, w - 160, 44);
 
+    // trigger the download
     var link = document.createElement("a");
     link.download = "which-dev-are-you.jpg";
     link.href = canvas.toDataURL("image/jpeg", 0.92);
     link.click();
 }
 
+// Canvas has no text wrapping: add words one by one and start a new line
+// whenever the next word would exceed maxWidth.
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
     var words = text.split(" ");
     var line = "";
     for (var n = 0; n < words.length; n++) {
         var testLine = line + words[n] + " ";
-        var metrics = ctx.measureText(testLine);
-        if (metrics.width > maxWidth && n > 0) {
+        if (ctx.measureText(testLine).width > maxWidth && n > 0) {
             ctx.fillText(line, x, y);
             line = words[n] + " ";
             y += lineHeight;
